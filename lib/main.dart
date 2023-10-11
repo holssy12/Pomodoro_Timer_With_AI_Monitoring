@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-
-import 'landing.dart';
+import 'homepage.dart';
 
 // --------------------------------
 void main() {
@@ -34,7 +30,8 @@ class MyApp extends StatelessWidget {
             child: Container(
               width: screenWidth,
               height: screenHeight,
-              child: LandingPage(),
+              child:
+                  HomePage(), // 2023.10.06, LJK  landingpage 삭제//및 landing.dart 삭제 homepage class로의 연결
             ),
           );
         },

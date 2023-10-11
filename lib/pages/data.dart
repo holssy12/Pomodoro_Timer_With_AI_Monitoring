@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -66,7 +65,7 @@ class _DataState extends State<Data> {
             backgroundColor: Colors.black,
             title: const Text.rich(
               TextSpan(
-                text: 'Data', // text for title
+                text: '기록', // text for title
                 style: TextStyle(
                   fontSize: 24,
                   color: Colors.greenAccent,
@@ -114,7 +113,7 @@ class _DataState extends State<Data> {
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Arial')),
-                              Text('total minutes',
+                              Text('집중한 시간',
                                   style: TextStyle(
                                       color: Colors.greenAccent,
                                       fontSize: 12,
@@ -147,7 +146,7 @@ class _DataState extends State<Data> {
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Arial')),
-                              Text('longest session',
+                              Text('가장 긴 집중시간',
                                   style: TextStyle(
                                       color: Colors.greenAccent,
                                       fontSize: 12,
@@ -180,7 +179,7 @@ class _DataState extends State<Data> {
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Arial')),
-                              Text('number of sessions',
+                              Text('집중한 횟수',
                                   style: TextStyle(
                                       color: Colors.greenAccent,
                                       fontSize: 12,
@@ -215,7 +214,7 @@ class _DataState extends State<Data> {
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Arial')),
-                              Text('avg session time',
+                              Text('평균 집중 시간',
                                   style: TextStyle(
                                       color: Colors.greenAccent,
                                       fontSize: 12,

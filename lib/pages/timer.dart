@@ -100,7 +100,7 @@ class _TimerState extends State<MyTimer> {
     super.initState();
     try {
       if (widget.breakTime == '0') {
-        throw Exception('Break time cannot be 0');
+        throw Exception('휴식 시간은 0분보다 커야합니다');
       }
       _timeInt = int.parse(widget.workTime);
       _time = Duration(minutes: _timeInt);
@@ -129,7 +129,7 @@ class _TimerState extends State<MyTimer> {
                     ),
                     SizedBox(width: 20),
                     Text(
-                      'Invalid input!',
+                      '잘못된 입력입니다!',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -145,10 +145,10 @@ class _TimerState extends State<MyTimer> {
                         width:
                             50), // Add some horizontal spacing to align the text with the first message
                     Text(
-                      "Please enter valid numbers to start.",
+                      "(올바른 분을 입력해주세요)",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 14,
+                        fontSize: 10,
                         fontFamily: 'Arial',
                       ),
                     ),
@@ -221,7 +221,7 @@ class _TimerState extends State<MyTimer> {
                           ),
                           SizedBox(width: 20),
                           Text(
-                            'Session Completed!',
+                            '집중시간이 끝났습니다!',
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -237,10 +237,10 @@ class _TimerState extends State<MyTimer> {
                               width:
                                   50), // Add some horizontal spacing to align the text with the first message
                           Text(
-                            'You logged ${_sessionCount * _timeInt} minutes.',
+                            '${_sessionCount * _timeInt}분 동안 집중하셨습니다.',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 10,
                               fontFamily: 'Arial',
                             ),
                           ),
@@ -286,7 +286,7 @@ class _TimerState extends State<MyTimer> {
   Widget build(BuildContext context) {
     final int minutes = _time.inMinutes;
     final int seconds = _time.inSeconds % 60;
-    String timerState = "Break";
+    String timerState = "휴식";
     if (_timerCount % 2 == 0) {
       timerState = '$_counter / $_sessionCount';
     }
@@ -297,7 +297,7 @@ class _TimerState extends State<MyTimer> {
         backgroundColor: Colors.black,
         title: Text.rich(
           TextSpan(
-            text: 'Session', // text for title
+            text: '집중 중', // text for title
             style: TextStyle(
               fontSize: 24,
               color: Colors.greenAccent,

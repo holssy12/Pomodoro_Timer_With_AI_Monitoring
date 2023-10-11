@@ -23,7 +23,7 @@ class Habit extends StatelessWidget {
                 backgroundColor: Colors.black,
                 title: Text.rich(
                   TextSpan(
-                    text: 'Start session', // text for title
+                    text: '집중을 시작하세요', // text for title
                     style: TextStyle(
                       fontSize: 24,
                       color: Colors.greenAccent,
@@ -40,7 +40,7 @@ class Habit extends StatelessWidget {
               child: Column(
                 children: [
                   const Text(
-                    "Work duration",
+                    "집중할 시간",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
@@ -64,7 +64,7 @@ class Habit extends StatelessWidget {
                     decoration: const InputDecoration(
                       // filled: true,
                       fillColor: Colors.black12,
-                      labelText: '(in minutes)',
+                      labelText: '(분 단위로 적어주세요)',
                       labelStyle: TextStyle(color: Colors.white70),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(4.0)),
@@ -76,7 +76,7 @@ class Habit extends StatelessWidget {
                   ),
                   const SizedBox(height: 25),
                   const Text(
-                    "Break duration",
+                    "휴식할 시간",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
@@ -98,7 +98,7 @@ class Habit extends StatelessWidget {
                     decoration: const InputDecoration(
                       filled: true,
                       fillColor: Colors.black12,
-                      labelText: '(in minutes)',
+                      labelText: '(분 단위로 적어주세요)',
                       labelStyle: TextStyle(color: Colors.white70),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(4.0)),
@@ -112,7 +112,7 @@ class Habit extends StatelessWidget {
                       height:
                           25), // add a space between the text and the input field
                   const Text(
-                    "Sessions",
+                    "횟수",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
@@ -134,7 +134,7 @@ class Habit extends StatelessWidget {
                     decoration: const InputDecoration(
                       // filled: true,
                       fillColor: Colors.black12,
-                      labelText: '(number of work sessions)',
+                      labelText: '(횟수를 적어주세요)',
                       labelStyle: TextStyle(
                         color: Colors.white70,
                       ),
@@ -177,7 +177,7 @@ class Habit extends StatelessWidget {
                           side: BorderSide(color: Colors.black12, width: 2.0),
                         )),
                     child: const Text(
-                      "Start",
+                      "집중 시작",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.black,
