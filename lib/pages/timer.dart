@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'dart:async';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class MyCameraSession extends StatefulWidget {
   final String breakTime;
@@ -27,6 +30,7 @@ class _MyCameraSessionState extends State<MyCameraSession>
   List<CameraDescription>? cameras;
   CameraController? cameraController;
   bool? predicting;
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +39,7 @@ class _MyCameraSessionState extends State<MyCameraSession>
 
   void initStateAsync() async {
     WidgetsBinding.instance.addObserver(this);
+
     // 새로운 Isolate를 생성
     // 카메라 초기화
     initializeCamera();
@@ -61,46 +66,49 @@ class _MyCameraSessionState extends State<MyCameraSession>
       predicting = true;
     });
 
-    final int width = cameraImage.width;
-    final int height = cameraImage.height;
-    final int uvRowStride = cameraImage.planes[1].bytesPerRow;
-    final int uvPixelStride = cameraImage.planes[1].bytesPerPixel ?? 0;
-    final image = img.Image(width, height);
-    // 모든 픽셀을 YUV 값을 RGB로 변
-    for (int w = 0; w < width; w++) {
-      for (int h = 0; h < height; h++) {
-        final int uvIndex =
-            uvPixelStride * (w / 2).floor() + uvRowStride * (h / 2).floor();
-        final int index = h * width + w;
-        final y = cameraImage.planes[0].bytes[index];
-        final u = cameraImage.planes[1].bytes[uvIndex];
-        final v = cameraImage.planes[2].bytes[uvIndex];
-        image.data[index] = yuv2rgb(y, u, v);
-      }
-    }
-
-    // print(image.);
+    img.Image image = img.Image.fromBytes(
+        cameraImage.width, cameraImage.height, cameraImage.planes[0].bytes,
+        format: img.Format.bgr);
+    Uint8List jpeg = Uint8List.fromList(img.encodeJpg(image));
+    print(jpeg.length);
+    // final int width = cameraImage.width;
+    // final int height = cameraImage.height;
+    // final int uvRowStride = cameraImage.planes[1].bytesPerRow;
+    // final int uvPixelStride = cameraImage.planes[1].bytesPerPixel ?? 0;
+    // final image = img.Image(width, height);
+    // // 모든 픽셀을 YUV 값을 RGB로 변
+    // for (int w = 0; w < width; w++) {
+    //   for (int h = 0; h < height; h++) {
+    //     final int uvIndex =
+    //         uvPixelStride * (w / 2).floor() + uvRowStride * (h / 2).floor();
+    //     final int index = h * width + w;
+    //     final y = cameraImage.planes[0].bytes[index];
+    //     final u = cameraImage.planes[1].bytes[uvIndex];
+    //     final v = cameraImage.planes[2].bytes[uvIndex];
+    //     image.data[index] = yuv2rgb(y, u, v);
+    //   }
+    // }
 
     setState(() {
       predicting = false;
     });
   }
 
-  int yuv2rgb(int y, int u, int v) {
-    // YUV 픽셀 값을 RGB 값으로 변환
-    int r = (y + v * 1436 / 1024 - 179).round();
-    int g = (y - u * 46549 / 131072 + 44 - v * 93604 / 131072 + 91).round();
-    int b = (y + u * 1814 / 1024 - 227).round();
-    // RGB 값을 경계 [0, 255] 내에 있도록 설정
-    r = r.clamp(0, 255);
-    g = g.clamp(0, 255);
-    b = b.clamp(0, 255);
-    // 최종적으로 변환된 RGB 값 반환
-    return 0xff000000 |
-        ((b << 16) & 0xff0000) |
-        ((g << 8) & 0xff00) |
-        (r & 0xff);
-  }
+  // int yuv2rgb(int y, int u, int v) {
+  //   // YUV 픽셀 값을 RGB 값으로 변환
+  //   int r = (y + v * 1436 / 1024 - 179).round();
+  //   int g = (y - u * 46549 / 131072 + 44 - v * 93604 / 131072 + 91).round();
+  //   int b = (y + u * 1814 / 1024 - 227).round();
+  //   // RGB 값을 경계 [0, 255] 내에 있도록 설정
+  //   r = r.clamp(0, 255);
+  //   g = g.clamp(0, 255);
+  //   b = b.clamp(0, 255);
+  //   // 최종적으로 변환된 RGB 값 반환
+  //   return 0xff000000 |
+  //       ((b << 16) & 0xff0000) |
+  //       ((g << 8) & 0xff00) |
+  //       (r & 0xff);
+  // }
 
   @override
   Widget build(BuildContext context) {
