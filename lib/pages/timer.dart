@@ -42,7 +42,7 @@ class _MyCameraSessionState extends State<MyCameraSession>
 
   void initializeCamera() async {
     cameras = await availableCameras();
-    // cameras[0]은 후면 카메라
+    // cameras[1]은 후면 카메라
     cameraController =
         CameraController(cameras![1], ResolutionPreset.low, enableAudio: false);
     cameraController?.initialize().then((_) async {
