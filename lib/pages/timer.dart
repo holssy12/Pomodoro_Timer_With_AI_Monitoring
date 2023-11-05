@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'dart:async';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image/image.dart' as img;
 
 class MyCameraSession extends StatefulWidget {
   final String breakTime;
@@ -19,43 +22,71 @@ class MyCameraSession extends StatefulWidget {
   State<MyCameraSession> createState() => _MyCameraSessionState();
 }
 
-class _MyCameraSessionState extends State<MyCameraSession> {
-  CameraController? _cameraController;
-  bool _isCameraReady = false;
-
+class _MyCameraSessionState extends State<MyCameraSession>
+    with WidgetsBindingObserver {
+  List<CameraDescription>? cameras;
+  CameraController? cameraController;
+  bool? predicting;
   @override
   void initState() {
     super.initState();
+    initStateAsync();
+  }
 
-    availableCameras().then((cameras) {
-      if (cameras.isNotEmpty && _cameraController == null) {
-        _cameraController = CameraController(
-          cameras[1],
-          ResolutionPreset.medium,
-        );
+  void initStateAsync() async {
+    WidgetsBinding.instance.addObserver(this);
+    // 새로운 Isolate를 생성
+    // 카메라 초기화
+    initializeCamera();
+  }
 
-        _cameraController!.initialize().then((_) {
-          setState(() {
-            _isCameraReady = true;
-          });
-        });
-      }
+  void initializeCamera() async {
+    cameras = await availableCameras();
+    // cameras[0]은 후면 카메라
+    cameraController =
+        CameraController(cameras![1], ResolutionPreset.low, enableAudio: false);
+    cameraController?.initialize().then((_) async {
+      // onLatestImageAvailable 함수를 전달하여 각 프레임에 대한 인식을 수행
+      await cameraController?.startImageStream(onLatestImageAvailable);
+      // 현재 카메라의 미리보기의 크기
+    });
+  }
+
+  onLatestImageAvailable(CameraImage cameraImage) async {
+    if (predicting ?? false) {
+      return;
+    }
+    setState(() {
+      // 이전 추론 완료
+      predicting = true;
+    });
+
+    // print(cameraImage.height);
+    Uint8List uint8list = cameraImage.planes[0].bytes;
+    // Uint8List uint8list2 = cameraImage.planes[1].bytes;
+    // Uint8List uint8list3 = cameraImage.planes[2].bytes;
+    print(uint8list); // 76800
+    // print(uint8list2.length); //38399
+    // print(uint8list3.length); // 38399
+
+    setState(() {
+      predicting = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (cameraController == null || !cameraController!.value.isInitialized) {
+      return Container();
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          Expanded(
-            flex: 1,
-            child: _cameraController != null && _isCameraReady
-                ? CameraPreview(_cameraController!)
-                : Container(
-                    color: Colors.grey,
-                  ),
+          AspectRatio(
+            aspectRatio: 1 / cameraController!.value.aspectRatio,
+            child: CameraPreview(cameraController!),
           ),
           MyTimer(
               breakTime: widget.breakTime,
@@ -64,6 +95,30 @@ class _MyCameraSessionState extends State<MyCameraSession> {
         ],
       ),
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      // 앱이 일시 중지되면 카메라 컨트롤러의 이미지 스트림 중지
+      case AppLifecycleState.paused:
+        cameraController?.stopImageStream();
+        break;
+      // 앱이 재개되면 카메라 컨트롤러의 이미지 스트림을 다시 시작
+      case AppLifecycleState.resumed:
+        if (!cameraController!.value.isStreamingImages) {
+          await cameraController?.startImageStream(onLatestImageAvailable);
+        }
+        break;
+      default:
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    cameraController?.dispose();
+    super.dispose();
   }
 }
 
