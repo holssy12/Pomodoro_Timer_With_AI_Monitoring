@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:http/http.dart' as http;
 
 class MyCameraSession extends StatefulWidget {
   final String breakTime;
@@ -70,7 +71,25 @@ class _MyCameraSessionState extends State<MyCameraSession>
         cameraImage.width, cameraImage.height, cameraImage.planes[0].bytes,
         format: img.Format.bgr);
     Uint8List jpeg = Uint8List.fromList(img.encodeJpg(image));
-    print(jpeg.length);
+    //서버전송파트
+    final Uri serverUrl =
+        Uri.parse('http://10.0.2.2:3058/api/upload-image'); // Android 에뮬레이터
+
+    final response = await http.post(
+      serverUrl, // 로컬 서버 주소와 엔드포인트로 업데이트
+      headers: {
+        'Content-Type': 'application/octet-stream',
+      },
+      body: jpeg,
+    );
+    if (response.statusCode == 200) {
+      print('이미지 업로드 성공');
+    } else {
+      print('이미지 업로드 실패: ${response.statusCode}');
+    }
+
+    //서버전송파트끝
+
     // final int width = cameraImage.width;
     // final int height = cameraImage.height;
     // final int uvRowStride = cameraImage.planes[1].bytesPerRow;
